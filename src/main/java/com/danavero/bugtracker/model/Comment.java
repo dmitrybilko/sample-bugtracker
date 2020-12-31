@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -28,6 +29,7 @@ public class Comment {
     private User author;
 
     @ManyToOne(optional = false)
+    @JoinColumn(updatable = false)
     private Task task;
 
     @Column(nullable = false, updatable = false)

@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -19,9 +20,10 @@ public class Attachment {
     @GeneratedValue
     private Long id;
 
-    @Column(unique = true, nullable = false, length = 2048)
+    @Column(unique = true, nullable = false, length = 768)
     private String location;
 
     @ManyToOne(optional = false)
+    @JoinColumn(updatable = false)
     private Task task;
 }

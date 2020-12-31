@@ -1,11 +1,14 @@
 package com.danavero.bugtracker.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -39,4 +42,10 @@ public class Task {
     @Column(nullable = false, updatable = false)
     @CreatedDate
     private Long created;
+
+    @OneToMany(mappedBy = "task")
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "task")
+    private List<Attachment> attachments;
 }
