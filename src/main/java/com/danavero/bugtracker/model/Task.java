@@ -11,14 +11,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.CreatedDate;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(indexes = { @Index(columnList = "assignee_id, created ASC") })
 @Data
-public class Task {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+public class Task extends Auditable {
 
     @Id
     @GeneratedValue
@@ -30,7 +36,7 @@ public class Task {
     @Column(length = 2048)
     private String description;
 
-    @Column(nullable = false)
+    @ManyToOne(optional = false)
     private Status status;
 
     @ManyToOne(optional = false)
@@ -39,13 +45,9 @@ public class Task {
     @ManyToOne(optional = false)
     private User assignee;
 
-    @Column(nullable = false, updatable = false)
-    @CreatedDate
-    private Long created;
-
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "task", orphanRemoval = true)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "task", orphanRemoval = true)
     private List<Attachment> attachments;
 }

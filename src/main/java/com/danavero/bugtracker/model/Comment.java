@@ -9,14 +9,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.CreatedDate;
-
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(indexes = { @Index(columnList = "task_id, created ASC") })
 @Data
-public class Comment {
+@EqualsAndHashCode(callSuper = false)
+public class Comment extends Auditable {
 
     @Id
     @GeneratedValue
@@ -31,8 +31,4 @@ public class Comment {
     @ManyToOne(optional = false)
     @JoinColumn(updatable = false)
     private Task task;
-
-    @Column(nullable = false, updatable = false)
-    @CreatedDate
-    private Long created;
 }

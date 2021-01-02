@@ -10,11 +10,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(indexes = { @Index(columnList = "task_id") })
 @Data
-public class Attachment {
+@EqualsAndHashCode(callSuper = false)
+public class Attachment extends Auditable {
 
     @Id
     @GeneratedValue
