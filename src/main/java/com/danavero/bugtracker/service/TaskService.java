@@ -1,18 +1,24 @@
 package com.danavero.bugtracker.service;
 
-import javax.transaction.Transactional;
+import java.util.Collections;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.modelmapper.ModelMapper;
 
 import com.danavero.bugtracker.dto.TaskDto;
-import com.danavero.bugtracker.dto.TaskRequest;
+import com.danavero.bugtracker.dto.TaskCreate;
+import com.danavero.bugtracker.dto.TaskUpdate;
+import com.danavero.bugtracker.exception.CommentNotFoundException;
 import com.danavero.bugtracker.exception.StatusNotFoundException;
+import com.danavero.bugtracker.exception.TaskNotFoundException;
 import com.danavero.bugtracker.exception.UserNotFoundException;
 import com.danavero.bugtracker.model.Task;
 import com.danavero.bugtracker.model.TaskStatus;
@@ -22,7 +28,6 @@ import com.danavero.bugtracker.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class TaskService {
 
     private final TaskRepository taskRepo;
@@ -34,20 +39,57 @@ public class TaskService {
     private final ModelMapper mapper;
 
     @Transactional
-    public TaskDto create(@NonNull final TaskRequest task) {
+    public TaskDto create(@NonNull final TaskCreate task) {
         return mapper.map(taskRepo.save(Task
             .builder()
             .title(task.getTitle())
             .description(task.getDescription())
             .status(statusRepo
                 .findByName(TaskStatus.NEW.getName())
-                .orElseThrow(() -> StatusNotFoundException.forName(TaskStatus.NEW.getName())))
+                .orElseThrow(() -> StatusNotFoundException.forId(-1L)))
             .author(userRepo
                 .findById(task.getAuthor())
                 .orElseThrow(() -> UserNotFoundException.forId(task.getAuthor())))
             .assignee(userRepo
                 .findById(task.getAssignee())
                 .orElseThrow(() -> UserNotFoundException.forId(task.getAssignee())))
+            .comments(Collections.emptyList())
+            .attachments(Collections.emptyList())
             .build()), TaskDto.class);
+    }
+
+    public Optional<TaskDto> read(@NonNull final Long id) {
+        return taskRepo
+            .findById(id)
+            .map(task -> mapper.map(task, TaskDto.class));
+    }
+
+    public Page<TaskDto> read(final Long unit, final Pageable pageable) {
+        final Page<Task> tasks = unit != null
+            ? taskRepo.getAllByAssignee_Unit_Id(unit, pageable)
+            : taskRepo.findAll(pageable);
+        return tasks.map(task -> mapper.map(task, TaskDto.class));
+    }
+
+    @Transactional
+    public void update(@NonNull final Long id, @NonNull final TaskUpdate dto) {
+        final Task task = taskRepo
+            .findById(id)
+            .orElseThrow(() -> CommentNotFoundException.forId(id));
+        task.setTitle(dto.getTitle());
+        task.setDescription(dto.getDescription());
+        task.setStatus(statusRepo
+            .findById(dto.getStatus())
+            .orElseThrow(() -> StatusNotFoundException.forId(dto.getStatus())));
+        task.setAssignee(userRepo
+            .findById(dto.getAssignee())
+            .orElseThrow(() -> UserNotFoundException.forId(dto.getAssignee())));
+    }
+
+    @Transactional
+    public void delete(@NonNull final Long id) {
+        taskRepo.delete(taskRepo
+            .findById(id)
+            .orElseThrow(() -> TaskNotFoundException.forId(id)));
     }
 }

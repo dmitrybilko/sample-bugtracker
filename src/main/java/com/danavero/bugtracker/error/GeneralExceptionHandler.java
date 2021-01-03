@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.danavero.bugtracker.exception.CommentNotFoundException;
 import com.danavero.bugtracker.exception.StatusNotFoundException;
+import com.danavero.bugtracker.exception.TaskNotFoundException;
 import com.danavero.bugtracker.exception.UnitNotFoundException;
 import com.danavero.bugtracker.exception.UserNotFoundException;
 
@@ -45,8 +47,21 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(StatusNotFoundException.class)
     public ResponseEntity<Object> handleStatusNotFoundException(final StatusNotFoundException e,
         final WebRequest request) {
-        return handleException(e,
-            "Unable to find a task status with the name '" + e.getName() + "'", request);
+        return handleException(e, "Unable to find a task status with the ID '" + e.getId() + "'",
+            request);
+    }
+
+    @ExceptionHandler(TaskNotFoundException.class)
+    public ResponseEntity<Object> handleTaskNotFoundException(final TaskNotFoundException e,
+        final WebRequest request) {
+        return handleException(e, "Unable to find a task with the ID '" + e.getId() + "'", request);
+    }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<Object> handleCommentNotFoundException(final CommentNotFoundException e,
+        final WebRequest request) {
+        return handleException(e, "Unable to find a comment with the ID '" + e.getId() + "'",
+            request);
     }
 
     private ResponseEntity<Object> handleException(final Exception e, final String message,

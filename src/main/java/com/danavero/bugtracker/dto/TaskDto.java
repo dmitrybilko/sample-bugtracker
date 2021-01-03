@@ -1,18 +1,19 @@
 package com.danavero.bugtracker.dto;
 
-import java.time.Instant;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaskDto {
+@EqualsAndHashCode(callSuper = false)
+public class TaskDto extends AuditableDto {
 
     private Long id;
 
@@ -25,8 +26,6 @@ public class TaskDto {
     private UserDto author;
 
     private UserDto assignee;
-
-    private Instant created;
 
     private List<CommentDto> comments;
 

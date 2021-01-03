@@ -15,27 +15,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
-import com.danavero.bugtracker.dto.TaskCreate;
-import com.danavero.bugtracker.dto.TaskDto;
-import com.danavero.bugtracker.dto.TaskUpdate;
-import com.danavero.bugtracker.service.TaskService;
+import com.danavero.bugtracker.dto.CommentDto;
+import com.danavero.bugtracker.dto.CommentCreate;
+import com.danavero.bugtracker.dto.CommentUpdate;
+import com.danavero.bugtracker.service.CommentService;
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("/comments")
 @RequiredArgsConstructor
-public class TaskController {
+public class CommentController {
 
-    private final TaskService service;
+    private final CommentService service;
 
     @PostMapping
-    public ResponseEntity<TaskDto> create(@Valid @RequestBody final TaskCreate task,
+    public ResponseEntity<CommentDto> create(@Valid @RequestBody final CommentCreate comment,
         final HttpServletRequest request) {
-        final TaskDto dto = service.create(task);
+        final CommentDto dto = service.create(comment);
         return ResponseEntity
             .created(URI.create(request
                 .getRequestURL()
@@ -46,20 +45,19 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskDto> read(@PathVariable final Long id) {
+    public ResponseEntity<CommentDto> read(@PathVariable final Long id) {
         return ResponseEntity.of(service.read(id));
     }
 
     @GetMapping
-    public ResponseEntity<Page<TaskDto>> read(@RequestParam(required = false) final Long unit,
-        final Pageable pageable) {
-        return ResponseEntity.ok(service.read(unit, pageable));
+    public ResponseEntity<Page<CommentDto>> read(final Pageable pageable) {
+        return ResponseEntity.ok(service.read(pageable));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable final Long id,
-        @Valid @RequestBody final TaskUpdate task) {
-        service.update(id, task);
+        @Valid @RequestBody final CommentUpdate comment) {
+        service.update(id, comment);
         return ResponseEntity
             .ok()
             .build();

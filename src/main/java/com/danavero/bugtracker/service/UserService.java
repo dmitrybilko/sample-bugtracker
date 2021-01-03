@@ -4,13 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
-
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.modelmapper.ModelMapper;
 
@@ -22,7 +20,6 @@ import com.danavero.bugtracker.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class UserService {
 
     private final UserRepository userRepo;
@@ -33,7 +30,6 @@ public class UserService {
 
     @Transactional
     public List<UserDto> create(@NonNull final UserDto... users) {
-        log.info("Creating user entries");
         return userRepo
             .saveAll(Arrays
                 .stream(users)

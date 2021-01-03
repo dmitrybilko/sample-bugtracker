@@ -5,14 +5,14 @@ import lombok.Getter;
 @Getter
 public class StatusNotFoundException extends RuntimeException {
 
-    private final String name;
+    private final Long id;
 
-    private StatusNotFoundException(final String name) {
+    private StatusNotFoundException(final Long id) {
         super();
-        this.name = name;
+        this.id = id;
     }
 
-    public static StatusNotFoundException forName(final String name) {
-        return new StatusNotFoundException(name);
+    public static StatusNotFoundException forId(final Long id) {
+        return new StatusNotFoundException(id);
     }
 }

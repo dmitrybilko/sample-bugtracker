@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class TaskRequest {
+public class TaskCreate {
 
     @NotBlank(message = "'title' must not be blank")
     @Size(message = "'title' size exceeds the limit (255)", max = 255)
