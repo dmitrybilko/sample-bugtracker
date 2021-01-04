@@ -30,17 +30,19 @@ import com.danavero.bugtracker.repository.UserRepository;
 @RequiredArgsConstructor
 public class TaskService {
 
+    private final UserService userService;
+
     private final TaskRepository taskRepo;
 
     private final UserRepository userRepo;
 
     private final StatusRepository statusRepo;
 
-    private final ModelMapper mapper;
+    private final ModelMapper modelMapper;
 
     @Transactional
     public TaskDto create(@NonNull final TaskCreate task) {
-        return mapper.map(taskRepo.save(Task
+        return extend(modelMapper.map(taskRepo.save(Task
             .builder()
             .title(task.getTitle())
             .description(task.getDescription())
@@ -55,20 +57,20 @@ public class TaskService {
                 .orElseThrow(() -> UserNotFoundException.forId(task.getAssignee())))
             .comments(Collections.emptyList())
             .attachments(Collections.emptyList())
-            .build()), TaskDto.class);
+            .build()), TaskDto.class));
     }
 
     public Optional<TaskDto> read(@NonNull final Long id) {
         return taskRepo
             .findById(id)
-            .map(task -> mapper.map(task, TaskDto.class));
+            .map(task -> extend(modelMapper.map(task, TaskDto.class)));
     }
 
     public Page<TaskDto> read(final Long unit, final Pageable pageable) {
         final Page<Task> tasks = unit != null
             ? taskRepo.getAllByAssignee_Unit_Id(unit, pageable)
             : taskRepo.findAll(pageable);
-        return tasks.map(task -> mapper.map(task, TaskDto.class));
+        return tasks.map(task -> extend(modelMapper.map(task, TaskDto.class)));
     }
 
     @Transactional
@@ -91,5 +93,11 @@ public class TaskService {
         taskRepo.delete(taskRepo
             .findById(id)
             .orElseThrow(() -> TaskNotFoundException.forId(id)));
+    }
+
+    private TaskDto extend(@NonNull final TaskDto task) {
+        task.setAuthor(userService.rate(task.getAuthor()));
+        task.setAssignee(userService.rate(task.getAssignee()));
+        return task;
     }
 }

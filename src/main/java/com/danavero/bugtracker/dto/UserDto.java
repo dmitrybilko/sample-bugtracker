@@ -16,4 +16,6 @@ public class UserDto {
     private String name;
 
     private UnitDto unit;
+
+    private Integer rating;
 }

@@ -1,8 +1,6 @@
 package com.danavero.bugtracker.service;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,17 +27,17 @@ import com.danavero.bugtracker.repository.UserRepository;
 @RequiredArgsConstructor
 public class CommentService {
 
-    private final CommentRepository commentRepo;
-
     private final UserRepository userRepo;
 
     private final TaskRepository taskRepo;
 
-    private final ModelMapper mapper;
+    private final CommentRepository commentRepo;
+
+    private final ModelMapper modelMapper;
 
     @Transactional
     public CommentDto create(@NonNull final CommentCreate comment) {
-        return mapper.map(commentRepo.save(Comment
+        return modelMapper.map(commentRepo.save(Comment
             .builder()
             .description(comment.getDescription())
             .author(userRepo
@@ -54,13 +52,13 @@ public class CommentService {
     public Optional<CommentDto> read(@NonNull final Long id) {
         return commentRepo
             .findById(id)
-            .map(comment -> mapper.map(comment, CommentDto.class));
+            .map(comment -> modelMapper.map(comment, CommentDto.class));
     }
 
     public Page<CommentDto> read(final Pageable pageable) {
         return commentRepo
             .findAll(pageable)
-            .map(comment -> mapper.map(comment, CommentDto.class));
+            .map(comment -> modelMapper.map(comment, CommentDto.class));
     }
 
     @Transactional

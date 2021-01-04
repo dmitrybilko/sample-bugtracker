@@ -20,13 +20,13 @@ import com.danavero.bugtracker.repository.StatusRepository;
 @RequiredArgsConstructor
 public class StatusService {
 
-    private final StatusRepository repo;
+    private final StatusRepository statusRepo;
 
-    private final ModelMapper mapper;
+    private final ModelMapper modelMapper;
 
     @Transactional
     public List<StatusDto> create(@NonNull final String... names) {
-        return repo
+        return statusRepo
             .saveAll(Arrays
                 .stream(names)
                 .map(name -> Status
@@ -35,7 +35,7 @@ public class StatusService {
                     .build())
                 .collect(Collectors.toList()))
             .stream()
-            .map(status -> mapper.map(status, StatusDto.class))
+            .map(status -> modelMapper.map(status, StatusDto.class))
             .collect(Collectors.toList());
     }
 }

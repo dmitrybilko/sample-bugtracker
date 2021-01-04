@@ -20,13 +20,13 @@ import com.danavero.bugtracker.repository.UnitRepository;
 @RequiredArgsConstructor
 public class UnitService {
 
-    private final UnitRepository repo;
+    private final UnitRepository unitRepo;
 
-    private final ModelMapper mapper;
+    private final ModelMapper modelMapper;
 
     @Transactional
     public List<UnitDto> create(@NonNull final String... names) {
-        return repo
+        return unitRepo
             .saveAll(Arrays
                 .stream(names)
                 .map(name -> Unit
@@ -35,7 +35,7 @@ public class UnitService {
                     .build())
                 .collect(Collectors.toList()))
             .stream()
-            .map(status -> mapper.map(status, UnitDto.class))
+            .map(status -> modelMapper.map(status, UnitDto.class))
             .collect(Collectors.toList());
     }
 }
